@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitAll - Fitness Centre Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to FitAll!</h1>
+            <nav>
+                <a href="/timetable">Timetable</a>
+                <a href="/add">Add Session</a>
+            </nav>
+        </header>
+
+        <div th:if="${message}" class="alert success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <section class="timetable-section">
+            <h2>Group Classes Timetable</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Session ID</th>
+                        <th>Session Name</th>
+                        <th>Fitness Level</th>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>Duration (mins)</th>
+                        <th>Available</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="sess : ${sessions}">
+                        <td th:text="${sess.sessionId}"></td>
+                        <td th:text="${sess.sessionName}"></td>
+                        <td th:text="${sess.fitnessLevel}"></td>
+                        <td th:text="${sess.dayOfWeek}"></td>
+                        <td th:text="${sess.startTime}"></td>
+                        <td th:text="${sess.duration}"></td>
+                        <td th:text="${sess.availableSpaces}"></td>
+                        <td>
+                            <form th:if="${sess.availableSpaces > 0}" th:action="@{/register}" method="post" style="display:inline;">
+                                <input type="hidden" name="sessionId" th:value="${sess.sessionId}">
+                                <button type="submit" class="btn btn-register">Register</button>
+                            </form>
+                            <span th:if="${sess.availableSpaces == 0}" class="full">Full</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="registrations-section">
+            <h2>Your Registered Sessions</h2>
+            <div th:if="${#lists.isEmpty(registeredSessions)}" class="empty-message">
+                You haven't registered for any sessions yet.
+            </div>
+            <table th:if="${!#lists.isEmpty(registeredSessions)}">
+                <thead>
+                    <tr>
+                        <th>Session ID</th>
+                        <th>Session Name</th>
+                        <th>Fitness Level</th>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>Duration (mins)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="sess : ${registeredSessions}">
+                        <td th:text="${sess.sessionId}"></td>
+                        <td th:text="${sess.sessionName}"></td>
+                        <td th:text="${sess.fitnessLevel}"></td>
+                        <td th:text="${sess.dayOfWeek}"></td>
+                        <td th:text="${sess.startTime}"></td>
+                        <td th:text="${sess.duration}"></td>
+                        <td>
+                            <form th:action="@{/cancel}" method="post" style="display:inline;">
+                                <input type="hidden" name="sessionId" th:value="${sess.sessionId}">
+                                <button type="submit" class="btn btn-cancel">Cancel</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
